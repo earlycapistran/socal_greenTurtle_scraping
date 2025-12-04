@@ -32,20 +32,36 @@ def get_scholar_count(query):
 
         soup = BeautifulSoup(response.content, 'html.parser')
 
+        # Check for CAPTCHA
+        if soup.find('form', {'id': 'captcha-form'}) or 'unusual traffic' in soup.get_text().lower():
+            print("    WARNING: CAPTCHA detected!")
+            raise Exception("CAPTCHA blocking - stopping analysis")
+
         # Look for results count
         results_div = soup.find('div', {'id': 'gs_ab_md'})
         if results_div:
             text = results_div.get_text()
+            print(f"    Results div text: {text}")
+
             # Try "About X results" format
-            match = re.search(r'About ([\d,]+) results', text)
-            if match:
-                return int(match.group(1).replace(',', ''))
-            # Try "X results" format
-            match = re.search(r'([\d,]+) results', text)
+            match = re.search(r'About ([\d,]+) results?', text)
             if match:
                 return int(match.group(1).replace(',', ''))
 
-        return None
+            # Try "X results" or "X result" format (singular or plural)
+            match = re.search(r'([\d,]+) results?', text)
+            if match:
+                return int(match.group(1).replace(',', ''))
+
+            # If we found the div but no match, likely 0 results
+            print(f"    WARNING: Results div found but no count pattern matched")
+            print(f"    Page preview: {soup.get_text()[:500]}")
+            return 0
+        else:
+            print(f"    WARNING: No results div found!")
+            # Print first 500 chars of page to see what we got
+            print(f"    Page preview: {soup.get_text()[:500]}")
+            return 0
 
     except Exception as e:
         print(f"    Error: {e}")
@@ -92,7 +108,7 @@ for idx, row in df.iterrows():
 
 # Add random delay between requests (10-30 seconds)
     if idx < len(df) - 1:  # Don't wait after the last one
-        wait_time = random.uniform(10, 30)
+        wait_time = random.uniform(5, 20)
         print(f"  Waiting {wait_time:.1f} seconds...")
         time.sleep(wait_time)
 
