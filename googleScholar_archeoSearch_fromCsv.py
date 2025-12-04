@@ -6,7 +6,6 @@ from datetime import datetime
 import re
 import random
 
-
 def get_scholar_count(query):
     """
     Get result count from Google Scholar
@@ -95,6 +94,12 @@ for idx, row in df.iterrows():
 
     # Save progress after each search
     df.to_csv('archeo_results_progress.csv', index=False)
+
+# Add random delay between requests (10-30 seconds)
+    if idx < len(df) - 1:  # Don't wait after the last one
+        wait_time = random.uniform(10, 30)
+        print(f"  Waiting {wait_time:.1f} seconds...")
+        time.sleep(wait_time)
 
 # Final save
 df.to_csv('archeo_results_final.csv', index=False)
