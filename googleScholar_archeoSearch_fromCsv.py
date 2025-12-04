@@ -13,6 +13,10 @@ def get_scholar_count(query):
     url = "https://scholar.google.com/scholar"
     params = {'q': query, 'hl': 'en'}
 
+    # Print the actual URL
+    full_url = f"{url}?q={requests.utils.quote(query)}&hl=en"
+    print(f"    URL: {full_url}")
+
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -28,16 +32,33 @@ def get_scholar_count(query):
 
         soup = BeautifulSoup(response.content, 'html.parser')
 
+        # Check for CAPTCHA
+        if soup.find('form', {'id': 'captcha-form'}) or 'unusual traffic' in soup.get_text().lower():
+            print("    WARNING: CAPTCHA detected!")
+            raise Exception("CAPTCHA blocking - stopping analysis")
+
+        # Debug: print what we found
+        results_div = soup.find('div', {'id': 'gs_ab_md'})
+        if results_div:
+            print(f"    Results div text: {results_div.get_text()}")
+        else:
+            print(f"    WARNING: No results div found!")
+            # Print first 500 chars of page to see what we got
+            print(f"    Page preview: {soup.get_text()[:500]}")
+
         # Look for results count
         results_div = soup.find('div', {'id': 'gs_ab_md'})
         if results_div:
             text = results_div.get_text()
+            print(f"    Results div text: {text}")
+
             # Try "About X results" format
-            match = re.search(r'About ([\d,]+) results', text)
+            match = re.search(r'About ([\d,]+) results?', text)
             if match:
                 return int(match.group(1).replace(',', ''))
-            # Try "X results" format
-            match = re.search(r'([\d,]+) results', text)
+
+            # Try "X results" or "X result" format (singular or plural)
+            match = re.search(r'([\d,]+) results?', text)
             if match:
                 return int(match.group(1).replace(',', ''))
 
