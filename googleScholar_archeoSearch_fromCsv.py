@@ -114,15 +114,6 @@ try:
         df.at[idx, 'date_searched'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         print(f"  Automated: {count}")
-        print(f"  Manual: {row['num_results']}")
-
-        # Check if they match
-        if pd.notna(count) and pd.notna(row['num_results']):
-            diff = abs(count - row['num_results'])
-            if diff <= 5:
-                print(f"  ✓ Match (diff: {diff})")
-            else:
-                print(f"  ✗ Difference: {diff}")
 
         # Save progress after each search
         df.to_csv('archeo_results_progress.csv', index=False)
