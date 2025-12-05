@@ -40,7 +40,4 @@
 "intitle:california AND intext:archaeology OR intext:archeology AND intext:""faunal remains"" AND intext:""southern california"" "," -""baja california"" -""environmental impact"" -""gold rush""",AND intext:mussel,mussel
 "intitle:california AND intext:archaeology OR intext:archeology AND intext:""faunal remains"" AND intext:""southern california"" "," -""baja california"" -""environmental impact"" -""gold rush""",AND intext:urchin,urchin
 "intitle:california AND intext:archaeology OR intext:archeology AND intext:""faunal remains"" AND intext:""southern california"" "," -""baja california"" -""environmental impact"" -""gold rush""",AND intext:turban snail ,turban snail
-"intitle:california AND intext:archaeology OR intext:archeology AND intext:""faunal remains"" AND intext:""southern california"" ",,AND intext:chiton,chiton
-,,,
-,,,
-
+"intitle:california AND intext:archaeology OR intext:archeology AND intext:""faunal remains"" AND intext:""southern california"" "," -""baja california"" -""environmental impact"" -""gold rush""",AND intext:chiton,chiton
